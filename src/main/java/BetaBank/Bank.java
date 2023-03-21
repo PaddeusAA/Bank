@@ -7,81 +7,90 @@ import java.util.stream.Stream;
 public class Bank {
 
     Scanner in = new Scanner(System.in);
-    HashMap<String, Integer> customerData = new HashMap<>();
-    ArrayList<BankClient> bankClients = new ArrayList<>();
-    boolean isSuccessful = false;
-    boolean exit = false;
+    private HashMap<String, Integer> customerData = new HashMap<>();
+    private ArrayList<BankClient> bankClients = new ArrayList<>();
+    private boolean isSuccessful = false;
+    private boolean exit = false;
+    private boolean signOut = false;
 
     public void start() {
 
-        System.out.println("Добро пожаловать в Beta Bank\nВставте карту\n1)Вставить\n2)Не вставлять");
-        int cardInATM = in.nextInt();
-        int amountOfAuthorizations = 0;
+        while (!exit){
+
+            signOut = false;
+            System.out.println("Р”РѕР±СЂРѕ РїРѕР¶Р°Р»РѕРІР°С‚СЊ РІ Beta Bank, Сѓ РІР°СЃ СѓР¶Рµ СЃС‡РµС‚?\n1)Р”Р°\n2)РќРµС‚ РёР»Рё С…РѕС‡Сѓ РѕС‚РєСЂС‹С‚СЊ РЅРѕРІС‹Р№");
+            int action = in.nextInt();
 
 
-        while (amountOfAuthorizations < 3 && !exit)  {
-            //проверка на вставку карты
-            if (cardInATM == 1) {
+            if (action == 1){
 
+                //РІРµРґРµС‚ РїРѕСЃС‡РµС‚ Р°РІС‚РѕСЂРёР·Р°С†РёР№, РµСЃР»Рё Р±РѕР»СЊС€Рµ 3 С‚Рѕ Р±Р°РЅРєРѕРјР°С‚ РѕС‚РєР»СЋС‡Р°РµС‚СЃСЏ
+                int amountOfAuthorizations = 0;
 
-                System.out.println("\nВведите логин и пароль");
+                while (amountOfAuthorizations < 3 && !signOut)  {
+                    System.out.println("\nР’РІРµРґРёС‚Рµ Р»РѕРіРёРЅ Рё РїР°СЂРѕР»СЊ");
 
-                String tempLogin = in.next();
-                int tempPassword = in.nextInt();
+                    String tempLogin = in.next();
+                    int tempPassword = in.nextInt();
 
+                    //РІС‹Р·РѕРІ РјРµС‚РѕРґР° Р°РІС‚РѕСЂРёР·Р°С†РёРё
+                    authorization(tempPassword, tempLogin);
 
-                //вызов метода авторизации
-                authorization(tempPassword, tempLogin);
+                    //РµСЃР»Рё Р°РІС‚РѕСЂРёР·Р°С†РёСЏ РїСЂРѕС€Р»Р° СѓСЃРїРµС€РЅРѕ Рё РЅРµ СѓСЃРїРµС€РЅС‹С… РІС…РѕРґРѕРІ Р±С‹Р»Рѕ РјРµРЅСЊС€Рµ 3
+                    if (isSuccessful && amountOfAuthorizations < 3) {
+                        //СЃР±СЂРѕСЃ Р°РІС‚РѕСЂРёР·Р°С†РёР№ С‚Рє Р±С‹Р» РІС‹РїРѕР»РЅРµРЅ СѓСЃРїРµС€РЅС‹Р№ РІС…РѕРґ
+                        amountOfAuthorizations = 0;
 
-                //если авторизация прошла успешно и не успешных входов было меньше 3
-                if (isSuccessful && amountOfAuthorizations < 3) {
+                        System.out.println("Р”РѕР±СЂРѕ РїРѕР¶Р°Р»РѕРІР°С‚СЊ. Р§С‚Рѕ РІС‹ С…РѕС‚РёС‚Рµ СЃРґРµР»Р°С‚СЊ\n");
 
-                    //сброс авторизаций тк был выполнен успешный вход
-                    amountOfAuthorizations = 0;
+                        //region РѕСЃРЅРѕРІРЅРѕР№ С†РёРєР» СЂР°Р±РѕС‚С‹ Р±Р°РЅРєРѕРјР°С‚Р°
+                        while (!signOut) {
 
-                    System.out.println("Добро пожаловать. Что вы хотите сделать\n");
+                            System.out.println(
+                                    "1) РџРѕСЃРјРѕС‚СЂРµС‚СЊ Р±Р°Р»Р°РЅСЃ\n" +
+                                            "2) РџРѕРїРѕР»РЅРёС‚СЊ СЃС‡РµС‚\n" +
+                                            "3) РЎРЅСЏС‚СЊ РґРµРЅСЊРіРё\n" +
+                                            "4) РџРѕСЃРјРѕС‚СЂРµС‚СЊ РёСЃС‚РѕСЂРёСЋ С‚СЂР°РЅР·Р°РєС†РёР№\n" +
+                                            "5) Р’С‹РЅСѓС‚СЊ РєР°СЂС‚Сѓ\n" + //РІРѕР·РјРѕР¶РЅРѕСЃС‚СЊ Р·Р°Р№С‚Рё РїРѕРґ РґСЂСѓРіРёРј Р»РѕРіРёРЅРѕРј
+                                            "6) Р—Р°РІРµСЂС€РёС‚СЊ СЂР°Р±РѕС‚Сѓ"); //Р·Р°РІРµСЂС‰РµРЅРёРµ СЂР°Р±РѕС‚С‹ РїСЂРёР»РѕР¶РµРЅРёСЏ
+                            action = in.nextInt();
 
-                    //цикл работы банкомата
-                    while (!exit) {
-                        System.out.println(
-                                "\n1) Посмотреть баланс\n" +
-                                        "2) Пополнить счет\n" +
-                                        "3) Снять деньги\n" +
-                                        "4) Посмотреть историю транзакций\n" +
-                                        "5) Завершить");
-                        int action = in.nextInt();
+                            if (action == 1) {
+                                balance(tempLogin);
+                            } else if (action == 2) {
+                                refill(tempLogin);
+                            } else if (action == 3) {
+                                cashWithdrawal(tempLogin);
+                            } else if (action == 4) {
+                                transactions(tempLogin);
+                            } else if (action == 5) {
+                                signOut = true;
+                            } else if (action == 6) {
+                                signOut = true;
+                                exit = true;
+                            }
 
-                        if (action == 1) {
-                            balance(tempLogin);
-                        } else if (action == 2) {
-                            refill(tempLogin);
-                        } else if (action == 3) {
-                            cashWithdrawal(tempLogin);
-                        } else if (action == 4) {
-                            transactions(tempLogin);
-                        } else if (action == 5) {
-                            exit = true;
                         }
+                        //endregion
 
+                    } else {
+                        System.out.println("РќРµРІРµСЂРЅС‹Р№ РїРёРЅ РёР»Рё РїСЂРµРІС‹С€РµРЅРѕ РєРѕР»РёС‡РµСЃС‚РІРѕ РЅРµРІРµСЂРЅС‹С… Р°РІС‚РѕСЂРёР·Р°С†РёР№\n");
+                        amountOfAuthorizations++;
+
+                        if(amountOfAuthorizations == 3) {
+                            signOut = true;
+                        }
                     }
-
-
-                } else {
-                    System.out.println("Неверный пин или превышено количество неверных авторизаций\n");
-                    amountOfAuthorizations++;
                 }
 
-            } else if (cardInATM == 2) {
-                System.out.println("Ну нет так нет");
-                break;
-
-            } else {
-                System.out.println("Ошибка ввода");
+            } else if (action == 2) {
+                addBankClient();
             }
+
         }
     }
 
-    //метод прохождения авторизации в банкомате
+    //РјРµС‚РѕРґ РїСЂРѕС…РѕР¶РґРµРЅРёСЏ Р°РІС‚РѕСЂРёР·Р°С†РёРё РІ Р±Р°РЅРєРѕРјР°С‚Рµ
     private boolean authorization(Integer tempPassword, String tempLogin) {
 
         isSuccessful = customerData.entrySet().stream()
@@ -92,9 +101,9 @@ public class Bank {
         return isSuccessful;
     }
 
-    //метод вывода всех транзакций
+    //РјРµС‚РѕРґ РІС‹РІРѕРґР° РІСЃРµС… С‚СЂР°РЅР·Р°РєС†РёР№
     private void transactions(String userLogin) {
-        System.out.println("Вот список ваших транзакций");
+        System.out.println("Р’РѕС‚ СЃРїРёСЃРѕРє РІР°С€РёС… С‚СЂР°РЅР·Р°РєС†РёР№");
 
         bankClients.stream()
                 .filter(client -> client.getLogin().equals(userLogin))
@@ -109,19 +118,19 @@ public class Bank {
                 });
     }
 
-    //метод вывода баланса
+    //РјРµС‚РѕРґ РІС‹РІРѕРґР° Р±Р°Р»Р°РЅСЃР°
     private void balance(String userLogin) {
 
         bankClients.stream()
                 .filter(client -> client.getLogin().equals(userLogin))
                 .findFirst()
-                .ifPresent(client -> System.out.println("Ваш баланс: " + client.getClientBalance()));
+                .ifPresent(client -> System.out.println("Р’Р°С€ Р±Р°Р»Р°РЅСЃ: " + client.getClientBalance()));
     }
 
-    //метод пополнения
+    //РјРµС‚РѕРґ РїРѕРїРѕР»РЅРµРЅРёСЏ
     private void refill(String userLogin) {
 
-        System.out.println("Вставте все купюры в приемник");
+        System.out.println("Р’СЃС‚Р°РІС‚Рµ РІСЃРµ РєСѓРїСЋСЂС‹ РІ РїСЂРёРµРјРЅРёРє");
         int replenishment = in.nextInt();
 
         bankClients.stream()
@@ -129,15 +138,15 @@ public class Bank {
                 .findFirst()
                 .ifPresent(client -> {
                     client.setClientBalance(client.getClientBalance() + replenishment);
-                    client.clientTransactions.add("Пополнение счета на " + replenishment + "$");
+                    client.clientTransactions.add("РџРѕРїРѕР»РЅРµРЅРёРµ СЃС‡РµС‚Р° РЅР° " + replenishment + "$");
                 });
 
     }
 
-    //метод снятия со счета
+    //РјРµС‚РѕРґ СЃРЅСЏС‚РёСЏ СЃРѕ СЃС‡РµС‚Р°
     private void cashWithdrawal(String userLogin) {
 
-        System.out.println("Сколько вы хотите снять?");
+        System.out.println("РЎРєРѕР»СЊРєРѕ РІС‹ С…РѕС‚РёС‚Рµ СЃРЅСЏС‚СЊ?");
         int withdrawal = in.nextInt();
 
         bankClients.stream()
@@ -146,24 +155,26 @@ public class Bank {
                 .ifPresent(client -> {
                     if (client.getClientBalance() > withdrawal) {
                         client.setClientBalance(client.getClientBalance() - withdrawal);
-                        client.clientTransactions.add("Снятие со счета " + withdrawal + "$");
+                        client.clientTransactions.add("РЎРЅСЏС‚РёРµ СЃРѕ СЃС‡РµС‚Р° " + withdrawal + "$");
 
                         bankClients.set(bankClients.indexOf(client), client);
                     } else {
-                        System.out.println("На вашем счете меньше запрашивоемой суммы");
+                        System.out.println("РќР° РІР°С€РµРј СЃС‡РµС‚Рµ РјРµРЅСЊС€Рµ Р·Р°РїСЂР°С€РёРІРѕРµРјРѕР№ СЃСѓРјРјС‹");
                     }
                 });
     }
 
-    //метод добовления нового клиента
-    public void addBankClient() {
-        System.out.println("Регистрация нового клиента\nПридумайте логин и пароль");
+    //РјРµС‚РѕРґ РґРѕР±РѕРІР»РµРЅРёСЏ РЅРѕРІРѕРіРѕ РєР»РёРµРЅС‚Р°
+    private void addBankClient() {
+        System.out.println("Р РµРіРёСЃС‚СЂР°С†РёСЏ РЅРѕРІРѕРіРѕ РєР»РёРµРЅС‚Р°\nРџСЂРёРґСѓРјР°Р№С‚Рµ Р»РѕРіРёРЅ Рё РїР°СЂРѕР»СЊ");
 
         String key = in.next();
         int value = in.nextInt();
 
         bankClients.add(new BankClient(0, key, value));
         customerData.put(key, value);
+
+        System.out.println("РЎРїР°СЃРёР±Рѕ Р·Р° СЂРµРіРёСЃС‚СЂР°С†РёСЋ, РІРѕР·РІСЂР°С‰РµРЅРёРµ РЅР° РіР»Р°РІРЅС‹Р№ СЌРєСЂР°РЅ\n");
     }
 
 }
