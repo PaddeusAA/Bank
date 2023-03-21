@@ -28,7 +28,7 @@ public class Bank {
                 int amountOfAuthorizations = 0;
 
                 while (amountOfAuthorizations < 3 && !signOut)  {
-                    System.out.println("\nВведите логин и пароль");
+                    System.out.println("\nВведите логин и пароль из цифр");
 
                     String tempLogin = in.next();
                     int tempPassword = in.nextInt();
@@ -74,17 +74,21 @@ public class Bank {
                         //endregion
 
                     } else {
-                        System.out.println("Неверный пин или превышено количество неверных авторизаций\n");
+                        System.err.println("Неверный пин \n");
                         amountOfAuthorizations++;
 
                         if(amountOfAuthorizations == 3) {
+                            System.err.println("Превышено количество неверных авторизаций\n");
                             signOut = true;
+                            exit = true;
                         }
                     }
                 }
 
             } else if (action == 2) {
                 addBankClient();
+            }else {
+                System.err.println("Некорректный ввод");
             }
 
         }
@@ -94,10 +98,7 @@ public class Bank {
     private boolean authorization(Integer tempPassword, String tempLogin) {
 
         isSuccessful = customerData.entrySet().stream()
-                .filter(client -> client.getKey().equals(tempLogin) && client.getValue().equals(tempPassword))
-                .findFirst()
-                .isPresent();
-
+                .anyMatch(client -> client.getKey().equals(tempLogin) && client.getValue().equals(tempPassword));
         return isSuccessful;
     }
 
@@ -166,7 +167,7 @@ public class Bank {
 
     //метод добовления нового клиента
     private void addBankClient() {
-        System.out.println("Регистрация нового клиента\nПридумайте логин и пароль");
+        System.out.println("Регистрация нового клиента\nПридумайте логин и пароль из цифр");
 
         String key = in.next();
         int value = in.nextInt();
